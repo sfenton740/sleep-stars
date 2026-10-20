@@ -144,6 +144,9 @@ function addDays(k,n){const [y,m,d]=k.split("-").map(Number);const x=new Date(y,
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
 let S=load(); KIDS.forEach(k=>{S[k.id]=S[k.id]||{nights:{},history:[],celebrated:{}}});
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+// one-time seed: both kids already slept in bed Sun Oct 18 & Mon Oct 19, 2026
+const SEED_VERSION=1, SEED_NIGHTS=["2026-10-18","2026-10-19"];
+if((S.seedVersion||0)<SEED_VERSION){KIDS.forEach(k=>SEED_NIGHTS.forEach(d=>{if(S[k.id].nights[d]===undefined)S[k.id].nights[d]=true}));S.seedVersion=SEED_VERSION;save();}
 function setNight(id,k,v,label){const n=S[id].nights;S[id].history.push({k,prev:n[k]===undefined?null:n[k]});
  if(v===null)delete n[k];else n[k]=v; S[id].history=S[id].history.slice(-50); save();}
 // streak: consecutive "yes" nights ending at last night (or tonight-in-progress if last night unmarked yet)
